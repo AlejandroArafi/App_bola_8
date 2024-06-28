@@ -24,6 +24,8 @@ class _MainAppState extends State<MainApp> {
   ];
   String _respuestaActual = "Hazme una pregunta";
   final AudioPlayer _audioPlayer = AudioPlayer();
+  final TextEditingController _controller = TextEditingController();
+  String _preguntaActual = "";
 
   @override
   void initState() {
@@ -42,22 +44,62 @@ class _MainAppState extends State<MainApp> {
     _audioPlayer.play(AssetSource('audio/magic_sound.mp3'));
   }
 
+  void _enviarPregunta() {
+    setState(() {
+      _preguntaActual = _controller.text;
+      _controller.clear();
+      _cambiarRespuesta();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        body: Center(
-          child: InkWell(
-            onTap: _cambiarRespuesta,
-            child: CircleAvatar(
-              radius: 100,
-              backgroundColor: Colors.black,
-              child: Text(
-                _respuestaActual,
-                style: const TextStyle(color: Colors.white, fontSize: 22),
-                textAlign: TextAlign.center,
+        appBar: AppBar(
+          title: const Text('Bola 8'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextField(
+                controller: _controller,
+                decoration: InputDecoration(
+                  hintText: 'Escribe tu pregunta',
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
+              SizedBox(height: 10),
+              ElevatedButton(
+                onPressed: _enviarPregunta,
+                child: Text('preguntar'),
+              ),
+              SizedBox(height: 20),
+              Text(
+                _preguntaActual.isEmpty
+                    ? 'hazme una pregunta'
+                    : _preguntaActual,
+                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+              ),
+              SizedBox(height: 20),
+              InkWell(
+                onTap: _cambiarRespuesta,
+                child: CircleAvatar(
+                  radius: 100,
+                  backgroundColor: Colors.black,
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      _respuestaActual,
+                      style: const TextStyle(color: Colors.white, fontSize: 22),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
