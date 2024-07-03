@@ -66,7 +66,7 @@ class _MainAppState extends State<MainApp> {
             children: [
               TextField(
                 controller: _controller,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Escribe tu pregunta',
                   border: OutlineInputBorder(),
                 ),
