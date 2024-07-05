@@ -56,7 +56,7 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        backgroundColor: Colors.pink[200],
+        backgroundColor: Colors.white,
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Transform.translate(
@@ -74,6 +74,7 @@ class _MainAppState extends State<MainApp> {
                 controller: _controller,
                 decoration: InputDecoration(
                   hintText: 'Escribe tu pregunta',
+                  hintStyle: TextStyle(color: Colors.pink[200]),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                   ),
@@ -114,7 +115,7 @@ class _MainAppState extends State<MainApp> {
                   color: Colors.transparent,
                   child: CircleAvatar(
                     radius: 120,
-                    backgroundColor: Colors.black,
+                    backgroundColor: Colors.pink[200],
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
                       child: Text(
