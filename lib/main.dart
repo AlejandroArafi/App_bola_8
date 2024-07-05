@@ -56,8 +56,14 @@ class _MainAppState extends State<MainApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
+        backgroundColor: Colors.pink[200],
         appBar: AppBar(
-          title: const Text('Bola 8'),
+          backgroundColor: Colors.white,
+          title: Transform.translate(
+            offset:
+                const Offset(0, 10), // Ajusta este valor para bajar el título
+            child: const Text('Bola 8'),
+          ),
         ),
         body: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -66,35 +72,57 @@ class _MainAppState extends State<MainApp> {
             children: [
               TextField(
                 controller: _controller,
-                decoration: const InputDecoration(
+                decoration: InputDecoration(
                   hintText: 'Escribe tu pregunta',
-                  border: OutlineInputBorder(),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: const BorderSide(
+                      color: Colors.grey,
+                    ),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20.0),
+                    borderSide: const BorderSide(
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
               ),
-              SizedBox(height: 10),
+              const SizedBox(height: 10),
               ElevatedButton(
                 onPressed: _enviarPregunta,
-                child: Text('preguntar'),
+                style: ElevatedButton.styleFrom(elevation: 2.0),
+                child: const Text('preguntar'),
               ),
               SizedBox(height: 20),
               Text(
                 _preguntaActual.isEmpty
-                    ? 'hazme una pregunta'
+                    ? 'Hazme una pregunta'
                     : _preguntaActual,
-                style: TextStyle(fontSize: 18, fontStyle: FontStyle.italic),
+                style:
+                    const TextStyle(fontSize: 18, fontStyle: FontStyle.normal),
               ),
               SizedBox(height: 20),
               InkWell(
                 onTap: _cambiarRespuesta,
-                child: CircleAvatar(
-                  radius: 100,
-                  backgroundColor: Colors.black,
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Text(
-                      _respuestaActual,
-                      style: const TextStyle(color: Colors.white, fontSize: 22),
-                      textAlign: TextAlign.center,
+                child: Material(
+                  shape: const CircleBorder(),
+                  elevation: 15.0,
+                  color: Colors.transparent,
+                  child: CircleAvatar(
+                    radius: 120,
+                    backgroundColor: Colors.black,
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        _respuestaActual,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 22),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
                 ),
