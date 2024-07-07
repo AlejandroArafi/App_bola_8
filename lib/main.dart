@@ -80,8 +80,7 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
         appBar: AppBar(
           backgroundColor: Colors.white,
           title: Transform.translate(
-            offset:
-                const Offset(0, 10), // Ajusta este valor para bajar el título
+            offset: const Offset(0, 10),
             child: Text(
               'App Bola 8',
               style: GoogleFonts.ubuntu(),
