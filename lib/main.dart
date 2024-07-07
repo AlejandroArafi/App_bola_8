@@ -35,6 +35,7 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   void initState() {
     super.initState();
     _animationController = AnimationController(
+      duration: const Duration(seconds: 1),
       vsync: this,
     );
     _animation =
@@ -130,7 +131,7 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
               ),
               const SizedBox(height: 20),
               GestureDetector(
-                onTap: _cambiarRespuesta,
+                //onTap: _cambiarRespuesta,
                 child: Transform.rotate(
                   angle: _animation.value,
                   child: Material(
