@@ -9,13 +9,17 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  google_fonts: ^6.2.0
+  audioplayers: ^6.0.0
+  sensors_plus: ^5.0.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^3.0.0
-  audioplayers: ^6.0.0
-  sensors_plus: ^5.0.1
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/audio/magic_sound.wav
+    - assets/audio/achievement-sparkle.wav

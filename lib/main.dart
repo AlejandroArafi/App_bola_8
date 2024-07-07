@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() {
   runApp(const MainApp());
@@ -20,9 +21,10 @@ class _MainAppState extends State<MainApp> {
     "No",
     "Tal vez",
     "Definitivamente",
-    "Pregunta de nuevo más tarde",
+    "No lo sé",
+    "Pregunta de nuevo",
   ];
-  String _respuestaActual = "Hazme una pregunta";
+  String _respuestaActual = "";
   final AudioPlayer _audioPlayer = AudioPlayer();
   final TextEditingController _controller = TextEditingController();
   String _preguntaActual = "";
@@ -30,7 +32,8 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    accelerometerEvents.listen((AccelerometerEvent event) {
+    SensorsPlatform.instance.accelerometerEvents
+        .listen((AccelerometerEvent event) {
       if (event.x.abs() > 15 || event.y.abs() > 15 || event.z.abs() > 15) {
         _cambiarRespuesta();
       }
@@ -41,7 +44,7 @@ class _MainAppState extends State<MainApp> {
     setState(() {
       _respuestaActual = _respuestas[Random().nextInt(_respuestas.length)];
     });
-    _audioPlayer.play(AssetSource('audio/magic_sound.mp3'));
+    _audioPlayer.play(AssetSource('audio/achievement-sparkle.wav'));
   }
 
   void _enviarPregunta() {
@@ -62,7 +65,10 @@ class _MainAppState extends State<MainApp> {
           title: Transform.translate(
             offset:
                 const Offset(0, 10), // Ajusta este valor para bajar el título
-            child: const Text('Bola 8'),
+            child: Text(
+              'App Bola 8',
+              style: GoogleFonts.ubuntu(),
+            ),
           ),
         ),
         body: Padding(
@@ -87,18 +93,18 @@ class _MainAppState extends State<MainApp> {
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20.0),
                     borderSide: const BorderSide(
-                      color: Colors.blue,
+                      color: Color.fromARGB(255, 225, 61, 240),
                     ),
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _enviarPregunta,
                 style: ElevatedButton.styleFrom(elevation: 2.0),
                 child: const Text('preguntar'),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               Text(
                 _preguntaActual.isEmpty
                     ? 'Hazme una pregunta'
@@ -106,7 +112,7 @@ class _MainAppState extends State<MainApp> {
                 style:
                     const TextStyle(fontSize: 18, fontStyle: FontStyle.normal),
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               InkWell(
                 onTap: _cambiarRespuesta,
                 child: Material(
@@ -122,7 +128,6 @@ class _MainAppState extends State<MainApp> {
                         _respuestaActual,
                         style:
                             const TextStyle(color: Colors.white, fontSize: 22),
-                        textAlign: TextAlign.center,
                       ),
                     ),
                   ),

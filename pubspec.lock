@@ -10,7 +10,7 @@ packages:
     source: hosted
     version: "2.11.0"
   audioplayers:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: audioplayers
       sha256: "752039d6aa752597c98ec212e9759519061759e402e7da59a511f39d43aa07d2"
@@ -160,6 +160,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  google_fonts:
+    dependency: "direct main"
+    description:
+      name: google_fonts
+      sha256: "5b1726fee554d1cc9db1baef8061b126567ff0a1140a03ed7de936e62f2ab98b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.2.0"
   http:
     dependency: transitive
     description:
@@ -313,7 +321,7 @@ packages:
     source: hosted
     version: "2.1.8"
   sensors_plus:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: sensors_plus
       sha256: "6898cd4490ffc27fea4de5976585e92fae55355175d46c6c3b3d719d42f9e230"
