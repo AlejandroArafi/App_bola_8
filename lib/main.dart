@@ -15,7 +15,7 @@ class MainApp extends StatefulWidget {
   State<MainApp> createState() => _MainAppState();
 }
 
-class _MainAppState extends State<MainApp> {
+class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   final List<String> _respuestas = [
     "Sí",
     "No",
@@ -28,10 +28,20 @@ class _MainAppState extends State<MainApp> {
   final AudioPlayer _audioPlayer = AudioPlayer();
   final TextEditingController _controller = TextEditingController();
   String _preguntaActual = "";
+  late AnimationController _animationController;
+  late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+    );
+    _animation =
+        Tween<double>(begin: 0, end: 2 * pi).animate(_animationController)
+          ..addListener(() {
+            setState(() {});
+          });
     SensorsPlatform.instance.accelerometerEvents
         .listen((AccelerometerEvent event) {
       if (event.x.abs() > 15 || event.y.abs() > 15 || event.z.abs() > 15) {
@@ -40,11 +50,18 @@ class _MainAppState extends State<MainApp> {
     });
   }
 
+  @override
+  void dispose() {
+    _animationController.dispose();
+    super.dispose();
+  }
+
   void _cambiarRespuesta() {
     setState(() {
       _respuestaActual = _respuestas[Random().nextInt(_respuestas.length)];
     });
     _audioPlayer.play(AssetSource('audio/achievement-sparkle.wav'));
+    _animationController.forward(from: 0);
   }
 
   void _enviarPregunta() {
@@ -113,21 +130,24 @@ class _MainAppState extends State<MainApp> {
                     const TextStyle(fontSize: 18, fontStyle: FontStyle.normal),
               ),
               const SizedBox(height: 20),
-              InkWell(
+              GestureDetector(
                 onTap: _cambiarRespuesta,
-                child: Material(
-                  shape: const CircleBorder(),
-                  elevation: 15.0,
-                  color: Colors.transparent,
-                  child: CircleAvatar(
-                    radius: 120,
-                    backgroundColor: Colors.pink[200],
-                    child: Padding(
-                      padding: const EdgeInsets.all(16.0),
-                      child: Text(
-                        _respuestaActual,
-                        style:
-                            const TextStyle(color: Colors.white, fontSize: 22),
+                child: Transform.rotate(
+                  angle: _animation.value,
+                  child: Material(
+                    shape: const CircleBorder(),
+                    elevation: 15.0,
+                    color: Colors.transparent,
+                    child: CircleAvatar(
+                      radius: 120,
+                      backgroundColor: Colors.pink[200],
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Text(
+                          _respuestaActual,
+                          style: const TextStyle(
+                              color: Colors.white, fontSize: 22),
+                        ),
                       ),
                     ),
                   ),
