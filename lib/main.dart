@@ -15,10 +15,30 @@ class MainApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: const HomeScreen(),
-      routes: {
-        '/respuesta': (context) => RespuestaScreen(
-              pregunta: ModalRoute.of(context)!.settings.arguments as String,
-            ),
+      onGenerateRoute: (settings) {
+        if (settings.name == '/respuesta') {
+          final String pregunta = settings.arguments as String;
+          return PageRouteBuilder(
+            pageBuilder: (context, animation, secondaryAnimation) =>
+                RespuestaScreen(pregunta: pregunta),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              const begin = Offset(1.0, 0.0);
+              const end = Offset.zero;
+              const curve = Curves.easeInOut;
+
+              var tween =
+                  Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+              var offsetAnimation = animation.drive(tween);
+
+              return SlideTransition(
+                position: offsetAnimation,
+                child: child,
+              );
+            },
+          );
+        }
+        return null;
       },
     );
   }
@@ -203,7 +223,7 @@ class _RespuestaScreenState extends State<RespuestaScreen>
                   elevation: 15.0,
                   color: Colors.transparent,
                   child: CircleAvatar(
-                    radius: 120,
+                    radius: 130,
                     backgroundColor: Colors.pink[200],
                     child: Padding(
                       padding: const EdgeInsets.all(16.0),
