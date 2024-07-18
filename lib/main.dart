@@ -8,14 +8,127 @@ void main() {
   runApp(const MainApp());
 }
 
-class MainApp extends StatefulWidget {
+class MainApp extends StatelessWidget {
   const MainApp({super.key});
 
   @override
-  State<MainApp> createState() => _MainAppState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      home: const HomeScreen(),
+      routes: {
+        '/respuesta': (context) => RespuestaScreen(
+              pregunta: ModalRoute.of(context)!.settings.arguments as String,
+            ),
+      },
+    );
+  }
 }
 
-class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  final List<String> _respuestas = [
+    "Sí",
+    "No",
+    "Tal vez",
+    "Definitivamente",
+    "No lo sé",
+    "Pregunta de nuevo",
+  ];
+  String _preguntaActual = "";
+  final AudioPlayer _audioPlayer = AudioPlayer();
+  final TextEditingController _controller = TextEditingController();
+
+  void _enviarPregunta() {
+    setState(() {
+      _preguntaActual = _controller.text;
+      _controller.clear();
+    });
+
+    Navigator.pushNamed(
+      context,
+      '/respuesta',
+      arguments: _preguntaActual,
+    ).then((_) {
+      _audioPlayer.play(AssetSource('audio/achievement-sparkle.wav'));
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Transform.translate(
+          offset: const Offset(0, 10),
+          child: Text(
+            'App Bola 8',
+            style: GoogleFonts.ubuntu(),
+          ),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                hintText: 'Escribe tu pregunta',
+                hintStyle: TextStyle(color: Colors.pink[200]),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: const BorderSide(
+                    color: Colors.grey,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                  borderSide: const BorderSide(
+                    color: Color.fromARGB(255, 225, 61, 240),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _enviarPregunta,
+              style: ElevatedButton.styleFrom(elevation: 2.0),
+              child: const Text('preguntar'),
+            ),
+            const SizedBox(height: 20),
+            Text(
+              _preguntaActual.isEmpty ? 'Hazme una pregunta' : _preguntaActual,
+              style: const TextStyle(fontSize: 18, fontStyle: FontStyle.normal),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class RespuestaScreen extends StatefulWidget {
+  final String pregunta;
+
+  const RespuestaScreen({required this.pregunta, Key? key}) : super(key: key);
+
+  @override
+  _RespuestaScreenState createState() => _RespuestaScreenState();
+}
+
+class _RespuestaScreenState extends State<RespuestaScreen>
+    with SingleTickerProviderStateMixin {
   final List<String> _respuestas = [
     "Sí",
     "No",
@@ -26,14 +139,13 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
   ];
   String _respuestaActual = "";
   final AudioPlayer _audioPlayer = AudioPlayer();
-  final TextEditingController _controller = TextEditingController();
-  String _preguntaActual = "";
   late AnimationController _animationController;
   late Animation<double> _animation;
 
   @override
   void initState() {
     super.initState();
+    _respuestaActual = _respuestas[Random().nextInt(_respuestas.length)];
     _animationController = AnimationController(
       duration: const Duration(seconds: 1),
       vsync: this,
@@ -43,6 +155,8 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
           ..addListener(() {
             setState(() {});
           });
+    _animationController.forward(from: 0);
+
     SensorsPlatform.instance.accelerometerEvents
         .listen((AccelerometerEvent event) {
       if (event.x.abs() > 15 || event.y.abs() > 15 || event.z.abs() > 15) {
@@ -65,96 +179,45 @@ class _MainAppState extends State<MainApp> with SingleTickerProviderStateMixin {
     _animationController.forward(from: 0);
   }
 
-  void _enviarPregunta() {
-    setState(() {
-      _preguntaActual = _controller.text;
-      _controller.clear();
-      _cambiarRespuesta();
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          backgroundColor: Colors.white,
-          title: Transform.translate(
-            offset: const Offset(0, 10),
-            child: Text(
-              'App Bola 8',
-              style: GoogleFonts.ubuntu(),
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Respuesta'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              'Pregunta: ${widget.pregunta}',
+              style: const TextStyle(fontSize: 20),
             ),
-          ),
-        ),
-        body: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              TextField(
-                controller: _controller,
-                decoration: InputDecoration(
-                  hintText: 'Escribe tu pregunta',
-                  hintStyle: TextStyle(color: Colors.pink[200]),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: const BorderSide(
-                      color: Colors.grey,
-                    ),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20.0),
-                    borderSide: const BorderSide(
-                      color: Color.fromARGB(255, 225, 61, 240),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _enviarPregunta,
-                style: ElevatedButton.styleFrom(elevation: 2.0),
-                child: const Text('preguntar'),
-              ),
-              const SizedBox(height: 20),
-              Text(
-                _preguntaActual.isEmpty
-                    ? 'Hazme una pregunta'
-                    : _preguntaActual,
-                style:
-                    const TextStyle(fontSize: 18, fontStyle: FontStyle.normal),
-              ),
-              const SizedBox(height: 20),
-              GestureDetector(
-                //onTap: _cambiarRespuesta,
-                child: Transform.rotate(
-                  angle: _animation.value,
-                  child: Material(
-                    shape: const CircleBorder(),
-                    elevation: 15.0,
-                    color: Colors.transparent,
-                    child: CircleAvatar(
-                      radius: 120,
-                      backgroundColor: Colors.pink[200],
-                      child: Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: Text(
-                          _respuestaActual,
-                          style: const TextStyle(
-                              color: Colors.white, fontSize: 22),
-                        ),
+            const SizedBox(height: 20),
+            GestureDetector(
+              onTap: _cambiarRespuesta,
+              child: Transform.rotate(
+                angle: _animation.value,
+                child: Material(
+                  shape: const CircleBorder(),
+                  elevation: 15.0,
+                  color: Colors.transparent,
+                  child: CircleAvatar(
+                    radius: 120,
+                    backgroundColor: Colors.pink[200],
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Text(
+                        _respuestaActual,
+                        style:
+                            const TextStyle(color: Colors.white, fontSize: 22),
                       ),
                     ),
                   ),
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
